@@ -1,0 +1,2 @@
+[web]
+nginx remote_user=keeper host_key_checking=False retry_files_enabled=False ansible_host=192.168.22.65
