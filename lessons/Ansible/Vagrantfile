@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+  :nginx => {
+        :box_name => "generic/ubuntu2204",
+        :vm_name => "nginx",
+  }
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+   
+      box.vm.box = boxconfig[:box_name]
+      box.vm.host_name = boxconfig[:vm_name]
+      
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 1
+       end
+
+      boxconfig.each do |ipconf|
+        box.vm.network "public_network", bridge: "Intel(R) 82579V Gigabit Network Connection"
+      end
+
+      box.vm.provision "shell", inline: <<-SHELL
+        mkdir -p ~root/.ssh
+        cp ~vagrant/.ssh/auth* ~root/.ssh
+        sudo sed -i 's/\#PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+        systemctl restart sshd
+        sudo -s
+        echo "vagrant ALL=(ALL) NOPASSWD:ALL">/etc/sudoers.d/vagrant; chmod 440 /etc/sudoers.d/vagrant; chown root: /etc/sudoers.d/vagrant
+        exit
+      SHELL
+    end
+  end
+end
