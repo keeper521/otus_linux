@@ -1,0 +1,48 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "generic/ubuntu2204"
+
+  # Network configuration
+  config.vm.network "public_network", bridge: "Intel(R) 82579V Gigabit Network Connection", :mac => "0800276E09C7"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "2"
+
+    # Configure additional disks
+    unless File.exist?('./second_disk.vdi')
+      vb.customize ['createhd', '--filename', './second_disk', '--size', 1024 * 5]
+      vb.customize ['createhd', '--filename', './third_disk', '--size', 1024 * 5]
+      vb.customize ['createhd', '--filename', './fourth_disk', '--size', 1024 * 5]
+      vb.customize ['createhd', '--filename', './fifth_disk', '--size', 1024 * 5]
+    end
+    #  vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--add', 'sata', '--controller', 'IntelAhci']
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './second_disk.vdi']
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', './third_disk.vdi']
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', './fourth_disk.vdi']
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 4, '--device', 0, '--type', 'hdd', '--medium', './fifth_disk.vdi']
+
+    config.vm.provision "file", source: "C:/Users/doom/.ssh/id_rsa_vagrant.pub", destination: "/home/vagrant/.ssh/me.pub"
+
+    config.vm.provision "shell" do |s|
+      s.inline = <<-SHELL
+        cat /home/vagrant/.ssh/me.pub >> /home/vagrant/.ssh/authorized_keys
+        mkdir -p ~root/.ssh
+        cp ~vagrant/.ssh/auth* ~root/.ssh
+        sudo -s
+        echo "vagrant ALL=(ALL) NOPASSWD:ALL">/etc/sudoers.d/vagrant; chmod 440 /etc/sudoers.d/vagrant; chown root: /etc/sudoers.d/vagrant
+        yes | mdadm --create --verbose /dev/md127 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
+        yes | mdadm --create --verbose /dev/md126 --level=0 --raid-devices=2 /dev/sdd /dev/sde
+        exit
+        cat /proc/mdstat
+      SHELL
+    end
+  end
+
+  # config.ssh.private_key_path = "C:/Users/doom/.ssh/id_rsa_vagrant"
+  
+
+end
