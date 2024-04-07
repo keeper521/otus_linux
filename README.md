@@ -4,3 +4,4 @@
 3. [RAID](https://github.com/keeper521/otus_linux/tree/main/lessons/RAID)
 4. [LVM](https://github.com/keeper521/otus_linux/tree/main/lessons/LVM)
 5. [ZFS](https://github.com/keeper521/otus_linux/tree/main/lessons/ZFS)
+6. [Управление пакетами](https://github.com/keeper521/otus_linux/tree/main/lessons/Управление_пакетами)
