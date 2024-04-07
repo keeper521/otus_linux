@@ -7,7 +7,7 @@ MACHINES = {
         :box_version => "4.3.4",
         :cpus => 4,
         :memory => 4096,
-        :provision => "./zfs.sh",
+        :provision => "./rpm.sh",
     }
 }
 
