@@ -1,0 +1,19 @@
+# -*- mode: ruby -*- 
+# vi: set ft=ruby : vsa
+
+
+Vagrant.configure(2) do |config| 
+    config.vm.box = "generic/centos8s" 
+    config.vm.box_version = "4.3.4" 
+    config.vm.provider "virtualbox" do |v|
+    # config.vbguest.installer_options = { allow_kernel_upgrade: true } 
+    v.memory = 1024 
+    v.cpus = 2 
+    end 
+    config.vm.define "systemd" do |systemd| 
+    systemd.vm.network "private_network", ip: "192.168.50.10",  virtualbox__intnet: "net1" 
+    systemd.vm.hostname = "systemd" 
+    # nfss.vm.provision "shell", path: "nfss_script.sh" 
+    end 
+   end 
+   
