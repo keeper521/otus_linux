@@ -8,3 +8,4 @@
 7. [GRUB](https://github.com/keeper521/otus_linux/tree/main/lessons/GRUB)
 8. [NFS](https://github.com/keeper521/otus_linux/tree/main/lessons/NFS)
 9. [systemd](https://github.com/keeper521/otus_linux/tree/main/lessons/systemd)
+10. [BASH](https://github.com/keeper521/otus_linux/tree/main/lessons/BASH)
